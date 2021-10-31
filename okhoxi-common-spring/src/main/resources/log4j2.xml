@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="OFF">
+    <properties>
+        <property name="logPath">${sys:user.dir}</property>
+        <property name="LOG_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss}]-[%p]-[%c:%L]-%m%n" />
+    </properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}]-[%p]-[%X{traceId}]-[%l]-%m%n"/>
+        </Console>
+
+        <RollingFile name="DEBUG" fileName="${logPath}/logs/debug.log" advertise="true" filePattern="${logPath}/logs/debug-%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Filters>
+                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL" />
+                <ThresholdFilter level="info" onMatch="DENY" onMismatch="NEUTRAL" />
+                <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" />
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="INFO" fileName="${logPath}/logs/info.log" advertise="true" filePattern="${logPath}/logs/info-%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Filters>
+                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="ERROR" fileName="${logPath}/logs/error.log" advertise="true" filePattern="${logPath}/logs/error-%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Filters>
+                <ThresholdFilter level="fatal" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="WARN" fileName="${logPath}/logs/warn.log" advertise="true" filePattern="${logPath}/logs/error-%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+        </Root>
+
+        <Logger name="com"  additivity="false">
+            <AppenderRef ref="ERROR"/>
+            <AppenderRef ref="INFO"/>
+            <AppenderRef ref="WARN"/>
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Logger name="org.elasticsearch"  additivity="false">
+            <AppenderRef ref="ERROR"/>
+            <AppenderRef ref="WARN"/>
+        </Logger>
+    </Loggers>
+</Configuration>

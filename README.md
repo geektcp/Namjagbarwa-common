@@ -1,2 +1,2 @@
-# alpha-common
+# okhoxi-common
 common libraries for Java
